@@ -80,7 +80,7 @@ def classify(text):
         if n:
             scores[lot] = n
     if not scores:
-        return {"lot": "silver", "name": dict((k, v) for k, _, v in LOTS)["silver"],
+        return {"lot": "silver", "name": next(n for k, n, _ in LOTS if k == "silver"),
                 "score": 0, "why": "нет маркеров — статистика по умолчанию"}
     top = max(scores.values())
     tied = [k for k, v in scores.items() if v == top]
