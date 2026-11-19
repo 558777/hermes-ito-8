@@ -48,11 +48,17 @@ LOTS = [
     ("nuggets", "Самородки Владельцу", "нестандартные находки, инсайды, аномалии рынка"),
 ]
 
+PRIORITY = ("nuggets", "diamond", "gold", "platinum", "corridors",
+            "brics", "silver", "law")
+
 RULES = {
     "law": ("суд", "закон", "лиценз", "сертифик", "пошлин", "штраф", "комплаенс",
             "регулятор", "запрет", "антимонопол", "ndt", "патент"),
-    "corridors": ("фрахт", "контейнер", "порт", "железн", "ржд", "коридор", "тариф",
-                  "рейс", "перевоз", "logistic", "freight", "shipping", "терминал"),
+    "platinum": ("платин", "порт", "фрахт", "терминал", "стивидор", "контейнер",
+                 "груз", "судно", "перевоз", "вагон", "логистик", "склад", "доставк",
+                 "logistic", "freight", "shipping"),
+    "corridors": ("коридор", "север-юг", "север–юг", "трасека", "мтк", "ржд", "тариф",
+                  "маршрут", "перевалк", "ж/д", "железн", "рейс"),
     "brics": ("уголь", "металл", "нефт", "газ", "удобрен", "еаэс", "брикс", "сырь",
               "медь", "никель", "алюмин", "сталь", "зерно"),
     "silver": ("курс", "ставк", "инфляц", "индекс", "биржа", "moex", "цб ", "рубл",
@@ -76,7 +82,9 @@ def classify(text):
     if not scores:
         return {"lot": "silver", "name": dict((k, v) for k, _, v in LOTS)["silver"],
                 "score": 0, "why": "нет маркеров — статистика по умолчанию"}
-    lot = max(scores, key=scores.get)
+    top = max(scores.values())
+    tied = [k for k, v in scores.items() if v == top]
+    lot = next((k for k in PRIORITY if k in tied), tied[0])
     name = next(n for k, n, _ in LOTS if k == lot)
     return {"lot": lot, "name": name, "score": scores[lot],
             "why": "совпадений: %d" % scores[lot]}
